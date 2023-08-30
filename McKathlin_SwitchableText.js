@@ -290,6 +290,9 @@ McKathlin.SwitchableText = McKathlin.SwitchableText || {};
  *          text resolved to empty would still show up on screen. Now, an empty
  *          name box window always hides.
  * 
+ * v2.0.1  8/30/2023
+ *        - This plugin is now free and open source under the MIT license.
+ * 
  * ============================================================================
  * MIT License
  *

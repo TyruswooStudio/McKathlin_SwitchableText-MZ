@@ -41,7 +41,7 @@ McKathlin.SwitchableText = McKathlin.SwitchableText || {};
  * @author McKathlin
  * @url https://www.tyruswoo.com
  * 
- * @help McKathlin Switchable Text
+ * @help McKathlin Switchable Text for RPG Maker MZ
  * ============================================================================
  * Compatibility
  * --------------

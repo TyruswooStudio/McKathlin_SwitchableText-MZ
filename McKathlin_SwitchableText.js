@@ -36,11 +36,10 @@ McKathlin.SwitchableText = McKathlin.SwitchableText || {};
 
 /*:
  * @target MZ
- * @plugindesc v1.2.1 Allows a text snippet to vary based on a switch, variable, or party
- * attribute without a page break.
+ * @plugindesc v1.1.1 Allows a text snippet to vary based on a switch or variable without a page
+ *             break. Switchable text snippets may be nested inside each other.
  * @author McKathlin
  * @url https://www.tyruswoo.com
- * 
  * @help McKathlin Switchable Text
  * 
  * WARNING: This is an older plugin! It lacks features and improvements
@@ -70,35 +69,10 @@ McKathlin.SwitchableText = McKathlin.SwitchableText || {};
  *   \OV[vJ < vK]{blah} Show "blah" if variable J's value is less than
  *                      variable K's value.
  * 
- * Some statements allow for text snippets based on party attributes.
- * \OPS stands for On Party Size.
- * Examples:
- *   \OPS[1]{hero}{heroes}    Show "hero" if party size is 1,
- *                            otherwise show "heroes"
- *   \OPS[>2]{buddies}{buddy} Text conditioned on more than 2 people in party.
- * 
- * \OPL stands for On Party Leader, and can check various actor attributes.
- * \OPM stands for On Party Member, and is true if any member matches.
- * When checking an attribute, use a comparison operator and numeric ID.
- * Here is a full list of attributes that can be checked:
- * --------------+------------------
- *  Attribute    |  Ways to write    
- * --------------+------------------
- *  Actor ID     |  actor, a        
- *  Class ID     |  class, c        
- *  State ID     |  state, s        
- * 
- * Examples:
- *   Hey \OPL[a=5]{old man}{kid}.
- *   Put your \OPL[class<=2]{might}{skill} to the test!
- *   A good meal restores health.\OPM[s=1]{ But it can't revive the dead.}
- * 
  * The following comparison operators are valid for variable-based snippets:
  *   ==   Equal               !=   Not equal
  *   >=   Greater or equal     >   Greater than
  *   <=   Less or equal        <   Less than
- * 
- * Switchable Text snippets can be nested inside each other.
  * 
  * If a dialogue choice ends up empty for a given Switchable state, it will
  * not appear in the player's list of dialogue choices. This allows available
@@ -110,40 +84,16 @@ McKathlin.SwitchableText = McKathlin.SwitchableText || {};
  *   \BO   Opening brace {
  *   \BC   Closing brace }
  * 
- * This plugin offers the following additional text codes:
- *   \PartySize         Replaced with number of party members
- *   \NumWord[expr]     Replaces expr with the word version of the number:
- *                      e.g. one, two, three...
- *                      Numbers greater than 10 are left as numerals.
- *   \Ordinal[expr]     Makes the ordinal version of a numeric expression:
- *                      e.g. 1st, 2nd, 3rd...
- *   \OrdinalWord[expr] Makes the spelled-out ordinal, e.g. first, second, ...
- *                      Numbers greater than 10 are numerals with a suffix.
- * 
- * \NumWord[expr], \Ordinal[expr], and \OrdinalWord[expr] can enclose \V[n],
- * \PartySize, and anything else that resolves to a number.
- * If you plan to use these features on text codes from other plugins,
- * put McKathlin_SwitchableText UNDER these plugins.
- * Examples:
- * You have squished \NumWord[\V[22]] bugs.
- * A \NumWord[\PartySize]-person party like yours would be in for a challenge.
- * \Ordinal[\V[75]] Place
- * You're our \OrdinalWord[\V[158]] visitor!
- * 
- * More Examples
- * --------------
+ * Examples
+ * ---------
  * Good \ON[21]{evening}{day}, \OFF[A]{stranger}{friend}.
  * Go safely. \OV[v143<=10]{Watch out for wolves.}
  * 
  * Excuse me for a moment.
- * My \OPS[s>1]{\ON[41]{enemies}{friends} have}{\ON[41]{enemy}{friend} has}
+ * My \OV[v2>1]{\ON[41]{enemies}{friends} have}{\ON[41]{enemy}{friend} has}
  * arrived.
  * 
  * We have\OV[v22!=v23]{n't} squished the same number of bugs.
- * 
- * Come in\OPS[>1]{, \OPS[2]{both of you}{all \NumWord[\PartySize] of you}}!
- * 
- * --------------
  * 
  * This plugin does not use any parameters or plugin commands.
  * ============================================================================
@@ -160,15 +110,7 @@ McKathlin.SwitchableText = McKathlin.SwitchableText || {};
  *        - Added variable-to-variable comparison. You can now check one
  *          variable's value against the value of another variable.
  * 
- * v1.2  9/15/2020
- *        - Added \OPS, which switches text based on party size.
- *        - Added \OPL, which switches text based on party leader attributes.
- *        - Added \OPM, which switches text based on any party member.
- *        - Added \PartySize, a text code for number of people in party.
- *        - Added \NumWord, \Ordinal, and \OrdinalWord, which change how
- *          numbers are written out.
- * 
- * v1.2.1  8/31/2023
+ * v1.1.1  9/1/2023
  *        - This plugin is now free and open source under the MIT license.
  * 
  * ============================================================================
@@ -206,29 +148,6 @@ McKathlin.SwitchableText = McKathlin.SwitchableText || {};
 	// Switchable condition evaluating helper methods
 	//=============================================================================
 
-	McKathlin.SwitchableText.compareUsingOperator = function(operator) {
-		switch(operator) {
-			case '=':
-			case '==':
-			case '===':
-				return function(left, right) { return left == right };
-			case '>=':
-				return function(left, right) { return left >= right };
-			case '<=':
-				return function(left, right) { return left <= right };
-			case '>':
-				return function(left, right) { return left > right };
-			case '<':
-				return function(left, right) { return left < right };
-			case '!=':
-			case '<>':
-				return function(left, right) { return left != right };
-			default:
-				throw new Error("Unsupported operator: " + operator);
-		} // end switch statement
-	};
-	
-	
 	McKathlin.SwitchableText.evalVariableCondition = function(conditionString) {
 		var captures = conditionString.match(
 			/^(v)?(\d+) ?(={1,3}|>=|<=|>|<|!=|<>) ?(v)?(-?\d+)$/i);
@@ -246,8 +165,25 @@ McKathlin.SwitchableText = McKathlin.SwitchableText || {};
 		}
 		
 		var operator = captures[3];
-		var compare = McKathlin.SwitchableText.compareUsingOperator(operator);
-		return compare(leftValue, rightValue);
+		switch(operator) {
+			case '=':
+			case '==':
+			case '===':
+				return leftValue == rightValue;
+			case '>=':
+				return leftValue >= rightValue;
+			case '<=':
+				return leftValue <= rightValue;
+			case '>':
+				return leftValue > rightValue;
+			case '<':
+				return leftValue < rightValue;
+			case '!=':
+			case '<>':
+				return leftValue != rightValue;
+			default:
+				throw new Error("Unsupported operator: " + operator);
+		} // end switch statement
 	};
 
 	McKathlin.SwitchableText.evalSwitchCondition = function(switchIdString) {
@@ -269,70 +205,7 @@ McKathlin.SwitchableText = McKathlin.SwitchableText || {};
 		var key = [mapId, eventId, switchChar];
 		return $gameSelfSwitches.value(key);
 	};
-	
-	McKathlin.SwitchableText.evalPartySizeCondition = function(conditionString) {
-		// The stand-in variable name for party size can be "size", any single letter, or nothing.
-		// The comparison operator is optional, too. If none, treat as an equals-check.
-		// All that's strictly necessary is the number to compare to.
-		var captures = conditionString.match(/^(?:(?:size|[a-z])? ?(={1,3}|>=|<=|>|<|!=|<>))? ?(\d+)$/i);
-		var operator = captures[1];
-		var expectedSize = Number.parseInt(captures[2]);
-		
-		var compare;
-		if (operator == null) {
-			compare = function(left, right) { return left == right };
-		} else {
-			compare = McKathlin.SwitchableText.compareUsingOperator(operator);
-		}
-		return compare($gameParty.size(), expectedSize);
-	};
 
-	McKathlin.SwitchableText.evalPartyLeaderCondition = function(conditionString) {
-		return McKathlin.SwitchableText.checkActorsInList( [ $gameParty.leader() ], conditionString);
-	};
-	
-	McKathlin.SwitchableText.evalPartyMemberCondition = function(conditionString) {
-		return McKathlin.SwitchableText.checkActorsInList($gameParty.members(), conditionString);
-	};
-	
-	McKathlin.SwitchableText.checkActorsInList = function(actorList, conditionString) {
-		var captures = conditionString.match(
-			/^(a|actor|c|class|s|state) ?(={1,3}|>=|<=|>|<|!=|<>) ?(\d+)$/i);
-		var typeString = captures[1].toLowerCase();
-		var compare = McKathlin.SwitchableText.compareUsingOperator(captures[2]);
-		var expectedValue = Number.parseInt(captures[3]);
-		
-		if (typeString.startsWith('a')) {
-			// check actor
-			for (const actor of actorList) {
-				if (compare(actor.actorId(), expectedValue)) {
-					return true;
-				}
-			}
-			return false; // No actor match found.
-		} else if (typeString.startsWith('c')) {
-			// check class
-			for (const actor of actorList) {
-				if (compare(actor.currentClass().id, expectedValue)) {
-					return true;
-				}
-			}
-			return false; // No class match found.
-		} else if (typeString.startsWith('s')) {
-			// check states
-			for (const actor of actorList) {
-				for (const state of actor.states()) {
-					if (compare(state.id, expectedValue)) {
-						return true;
-					}
-				}
-			}
-			return false; // No state match found.
-		} else {
-			throw new Error("Type '" + typeString + "' is not supported in Switchable Text.");
-		}
-	};
-	
 	//--------------------------------------------------
 	// Game_Map running event ID - new method
 	Game_Map.prototype.runningEventId = function() {
@@ -353,24 +226,13 @@ McKathlin.SwitchableText = McKathlin.SwitchableText || {};
 	Window_Base.prototype.convertEscapeCharacters = function(text) {
 		text = McKathlin.SwitchableText.Window_Base_convertEscapeCharacters.call(
 			this, text);
-		text = McKathlin.SwitchableText.convertPartySizeCode(text);
 		text = McKathlin.SwitchableText.convertSwitchableText(text);
-		text = McKathlin.SwitchableText.convertOrdinalCodes(text);
-		text = McKathlin.SwitchableText.convertNumberWordCode(text);
 		text = McKathlin.SwitchableText.convertEncodedBraces(text);
 		return text;
 	};
-	
-	//----------------------------------------------------------
-	// convert party size code - new method
-	McKathlin.SwitchableText.convertPartySizeCode = function(text) {
-		return text.replace(/\x1bPartySize/gi, function() {
-			return "" + $gameParty.size();
-		}.bind(this));
-	};
-	
+
 	//---------------------------------------------------
-	// Convert Switchable Text - new method
+	// Window_Base convert Switchable Text - new method
 	McKathlin.SwitchableText.convertSwitchableText = function(text) {
 		// Convert switch-conditioned text.
 		// If statements are nested, multiple passes will be necessary to replace all.
@@ -378,10 +240,10 @@ McKathlin.SwitchableText = McKathlin.SwitchableText || {};
 		var textIsChanging = true;
 		while (textIsChanging) {
 			var newText = text.replace(
-				/\x1b(ON|OFF|OV|OPS|OPL|OPM)\[([^\]]+)\]\{([^\{\}]*)\}(?:\{([^\{\}]*)\}|([^\{])|$)/gi,
+				/\x1b(ON|OFF|OV)\[([^\]]+)\]\{([^\{\}]*)\}(?:\{([^\{\}]*)\}|([^\{])|$)/gi,
 				function() {
 					var textCode = arguments[1].toUpperCase();
-					var conditionString = arguments[2];
+					var conditionString = arguments[2].toUpperCase();
 					var ifText = arguments[3]; // Text to show if condition is true.
 					var elseText = arguments[4] || ""; // Text to show if condition is false.
 					var tail = arguments[5] || ""; // Captured for lookahead only. Put back.
@@ -399,84 +261,20 @@ McKathlin.SwitchableText = McKathlin.SwitchableText || {};
 							conditionMet = McKathlin.SwitchableText.evalVariableCondition(
 								conditionString);
 							break;
-						case 'OPS':
-							conditionMet = McKathlin.SwitchableText.evalPartySizeCondition(conditionString);
-							break;
-						case 'OPL':
-							conditionMet = McKathlin.SwitchableText.evalPartyLeaderCondition(conditionString);
-							break;
-						case 'OPM':
-							conditionMet = McKathlin.SwitchableText.evalPartyMemberCondition(conditionString);
-							break;
 						default:
 							throw new Error("Unbuilt Switchable code: " + textCode);
 					}
 					return (conditionMet ? ifText : elseText) + tail;
 				}.bind(this)
-			); // end replace
+			);
 			textIsChanging = (newText != text); // check for changes
 			text = newText; // update text
-		} // end while (textIsChanging)
+		} // while (textIsChanging)
 		return text;
 	};
-	
-	McKathlin.SwitchableText.convertOrdinalCodes = function(text) {
-		return text.replace(/\x1bOrdinal(Word)?\[([^\]]+)\]/gi, function(text) {
-			var spellOutWord = (arguments[1] != null);
-			var numString = arguments[2].trim();
-			
-			if (spellOutWord) {
-				switch(numString) {
-					case '1': return 'first'; break;
-					case '2': return 'second'; break;
-					case '3': return 'third'; break;
-					case '4': return 'fourth'; break;
-					case '5': return 'fifth'; break;
-					case '6': return 'sixth'; break;
-					case '7': return 'seventh'; break;
-					case '8': return 'eighth'; break;
-					case '9': return 'ninth'; break;
-					case '10': return 'tenth'; break;
-				}
-				// If it's something else, control will move on to next step.
-				// This is deliberate.
-				// Numbers greater than 10 should use numerals in any case.
-			}
-			// And here's the part of the code that uses numerals.
-			var ordinal = numString + 'th';
-			if (numString.endsWith('1') && !numString.endsWith('11')) {
-				return numString + 'st'; // e.g. 1st, 21st, 31st, ... but 11th.
-			} else if (numString.endsWith('2') && !numString.endsWith('12')) {
-				return numString + 'nd';
-			} else if (numString.endsWith('3') && !numString.endsWith('13')) {
-				return numString + 'rd';
-			} else {
-				return numString + 'th'; // Most numbers do this.
-			}
-		}.bind(this));
-	};
 
-	McKathlin.SwitchableText.convertNumberWordCode = function(text) {
-		return text.replace(/\x1bNumWord\[([^\]]+)\]/gi, function(text) {
-			var numString = arguments[1];
-			switch(numString) {
-				case '1': return 'one'; break;
-				case '2': return 'two'; break;
-				case '3': return 'three'; break;
-				case '4': return 'four'; break;
-				case '5': return 'five'; break;
-				case '6': return 'six'; break;
-				case '7': return 'seven'; break;
-				case '8': return 'eight'; break;
-				case '9': return 'nine'; break;
-				case '10': return 'ten'; break;
-				default: return numString;
-			}
-		}.bind(this));
-	};
-	
 	//-----------------------------------------------------
-	// Convert escapes to braces - new method
+	// Window_Base convert escapes to braces - new method
 	McKathlin.SwitchableText.convertEncodedBraces = function(text) {
 		// Convert escaped curly braces.
 		text = text.replace(/\x1bBO/gi, '{');
@@ -502,9 +300,6 @@ McKathlin.SwitchableText = McKathlin.SwitchableText || {};
 		}.bind(this));
 	};
 
-	//-------------------------------------------------------------------------
-	// Game_Interpreter adjust choice parameters - new helper method
-	// Removes all choices made empty Switchable Text.
 	Game_Interpreter.prototype.adjustChoiceParameters = function(params) {
 		newParams = params.clone();
 		var choices = newParams[0].clone();
@@ -531,7 +326,6 @@ McKathlin.SwitchableText = McKathlin.SwitchableText || {};
 		return newParams;
 	};
 
-	// new helper method. Check if empty after Switchable Text does its thing
 	McKathlin.SwitchableText.isEmpty = function(text) {
 		text = text.replace(/\\/g, '\x1b');
 		text = text.replace(/\x1b\x1b/g, '\\');

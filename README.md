@@ -3,7 +3,7 @@ It lacks the features and improvements of this plugin's later versions.
 To get the latest version for free, visit
 [Tyruswoo.com](https://www.tyruswoo.com).
 
-# McKathlin Switchable Text v1.2.1 for RPG Maker MZ
+# McKathlin Switchable Text v1.1.1 for RPG Maker MZ
 
 Allows a text snippet to vary based on a switch, variable, or party attribute!
 
@@ -51,34 +51,6 @@ The following comparison operators are valid for variable-based snippets:
   <=   Less or equal        <   Less than
 ```
 
-## Party Attributes
-
-Some statements allow for text snippets based on party attributes.
-* `\OPS` stands for On Party Size.
-
-Examples:
-| Text Code Example        | Description                                             |
-|--------------------------|---------------------------------------------------------|
-| \OPS[1]{hero}{heroes}    | Show "hero" if party size is 1, otherwise show "heroes" |
-| \OPS[>2]{buddies}{buddy} | Text conditioned on more than 2 people in party.        |
-
-* `\OPL` stands for On Party Leader, and can check various actor attributes.
-* `\OPM` stands for On Party Member, and is true if any member matches.
-
-When checking an attribute, use a comparison operator and numeric ID.
-Here is a full list of attributes that can be checked:
-
-| Attribute    |  Ways to write |
-|--------------|----------------|
-| Actor ID     |  actor, a      |
-| Class ID     |  class, c      |
-| State ID     |  state, s      |
-
-Examples:
-* `Hey \OPL[a=5]{old man}{kid}.`
-* `Put your \OPL[class<=2]{might}{skill} to the test!`
-* `A good meal restores health.\OPM[s=1]{ But it can't revive the dead.}`
-
 Switchable Text snippets can be nested inside each other.
 
 ## Switchable Text in Choice Lists
@@ -98,30 +70,7 @@ to escape the literal curly braces with these codes:
 | `\BO`     | Opening brace { |
 | `\BC`     | Closing brace } |
 
-## More Text Codes
-
-This plugin offers the following additional text codes:
-| Text Code            | Description                           |
-|----------------------|---------------------------------------|
-| `\PartySize`         | Replaced with number of party members |
-| `\NumWord[expr]`     | Replaces expr with the word version of the number: e.g. one, two, three... Numbers greater than 10 are left as numerals. |
-| `\Ordinal[expr]`     | Makes the ordinal version of a numeric expression: e.g. 1st, 2nd, 3rd... |
-| `\OrdinalWord[expr]` | Makes the spelled-out ordinal, e.g. first, second, ... Numbers greater than 10 are numerals with a suffix. |
-
-`\NumWord[expr]`, `\Ordinal[expr]`, and `\OrdinalWord[expr]` can enclose `\V[n]`,
-`\PartySize`, and anything else that resolves to a number.
-
-If you plan to use these features on text codes from other plugins,
-put McKathlin_SwitchableText **under** these plugins.
-
-Examples:
-* `You have squished \NumWord[\V[22]] bugs.`
-* `A \NumWord[\PartySize]-person party like yours is in for a challenge.`
-* `\Ordinal[\V[75]] Place`
-* `You're our \OrdinalWord[\V[158]] visitor!`
-* `This might be difficult for \an \OrdinalWord[\P[1.level]] level group.`
-
-## More Examples
+## Examples
 
 ```
 Good \ON[21]{evening}{day}, \OFF[A]{stranger}{friend}.
@@ -130,13 +79,11 @@ Go safely. \OV[v143<=10]{Watch out for wolves.}
 
 ```
 Excuse me for a moment.
-My \OPS[s>1]{\ON[41]{enemies}{friends} have}{\ON[41]{enemy}{friend} has}
+My \OV[v2>1]{\ON[41]{enemies}{friends} have}{\ON[41]{enemy}{friend} has}
 arrived.
 ```
 
 `We have\OV[v22!=v23]{n't} squished the same number of bugs.`
-
-`Come in\OPS[>1]{, \OPS[2]{both of you}{all \NumWord[\PartySize] of you}}!`
 
 ### For more help using the Switchable Text plugin, see [Tyruswoo.com](https://www.tyruswoo.com).
 
@@ -151,15 +98,7 @@ arrived.
 - Added variable-to-variable comparison. You can now check one
   variable's value against the value of another variable.
 
-**v1.2** - 9/15/2020
-- Added \OPS, which switches text based on party size.
-- Added \OPL, which switches text based on party leader attributes.
-- Added \OPM, which switches text based on any party member.
-- Added \PartySize, a text code for number of people in party.
-- Added \NumWord, \Ordinal, and \OrdinalWord, which change how
-  numbers are written out.
-
-**v1.2.1** - 8/31/2023
+**v1.1.1** - 9/1/2023
 - This older plugin version is now free and open source under the [MIT license](https://opensource.org/license/mit/).
 
 > Happy storytelling!

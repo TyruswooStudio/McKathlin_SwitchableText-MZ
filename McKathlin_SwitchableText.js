@@ -36,24 +36,19 @@ McKathlin.SwitchableText = McKathlin.SwitchableText || {};
 
 /*:
  * @target MZ
- * @plugindesc v1.3.1 Allows a text snippet to vary based on a switch, variable, or party
+ * @plugindesc v1.2.1 Allows a text snippet to vary based on a switch, variable, or party
  * attribute without a page break.
  * @author McKathlin
  * @url https://www.tyruswoo.com
  * 
  * @help McKathlin Switchable Text
+ * 
+ * WARNING: This is an older plugin! It lacks features and improvements
+ * present in the latest version. You can get the latest version for free
+ * on Tyruswoo.com.
+ *
  * ============================================================================
- * 
- * Compatibility: This plugin is fully compatible with Tyruswoo_BigChoiceLists
- * in any order on the plugin list. However, Switchable Text may conflict with
- * non-Tyruswoo plugins that alter the way Game_Interpreter makes choice lists.
- * If you encounter conflicts, try switching which choice-list-affecting plugin
- * comes after which. If conflicts with Switchable Text persist, talk to us on
- * Tyruswoo.com and we'll do our best to help you.
- * 
- * ============================================================================
- * 
- * Switchable Text enables text codes for use in messages or dialogue choices.
+ * This plugin enables text codes for use in messages or dialogue choices.
  * Text is inserted in place at runtime based on state of the referenced
  * switch or variable.
  * 
@@ -173,10 +168,7 @@ McKathlin.SwitchableText = McKathlin.SwitchableText || {};
  *        - Added \NumWord, \Ordinal, and \OrdinalWord, which change how
  *          numbers are written out.
  * 
- * v1.3  7/29/2022
- *        - Made fully compatible with Tyruswoo_BigChoiceLists.js
- * 
- * v1.3.1  8/31/2023
+ * v1.2.1  8/31/2023
  *        - This plugin is now free and open source under the MIT license.
  * 
  * ============================================================================
@@ -235,6 +227,7 @@ McKathlin.SwitchableText = McKathlin.SwitchableText || {};
 				throw new Error("Unsupported operator: " + operator);
 		} // end switch statement
 	};
+	
 	
 	McKathlin.SwitchableText.evalVariableCondition = function(conditionString) {
 		var captures = conditionString.match(
@@ -495,53 +488,50 @@ McKathlin.SwitchableText = McKathlin.SwitchableText || {};
 	// Hide empty choices
 	//=============================================================================
 
-	// If Tyruswoo_BigChoiceLists is present,
-	// its implementation of setupChoices supercedes Switchable Text's.
-	if (!Imported.Tyruswoo_BigChoiceLists) {
-		// Alias method
-		// Feeds choice setup an altered parameter list that omits empty choices.
-		McKathlin.SwitchableText.Game_Interpreter_setupChoices =
-			Game_Interpreter.prototype.setupChoices;
-		Game_Interpreter.prototype.setupChoices = function(params) {
-			var newParams = this.adjustChoiceParameters(params);
-			McKathlin.SwitchableText.Game_Interpreter_setupChoices.call(this, newParams);
-			this._choiceBranches = newParams[5];
-			$gameMessage.setChoiceCallback(function(n) {
-				this._branch[this._indent] = this._choiceBranches[n];
-			}.bind(this));
-		};
+	//-------------------------------------------------------------------------
+	// Game_Interpreter setup choices - extended method
+	// Feeds choice setup an altered parameter list that omits empty choices.
+	McKathlin.SwitchableText.Game_Interpreter_setupChoices =
+		Game_Interpreter.prototype.setupChoices;
+	Game_Interpreter.prototype.setupChoices = function(params) {
+		var newParams = this.adjustChoiceParameters(params);
+		McKathlin.SwitchableText.Game_Interpreter_setupChoices.call(this, newParams);
+		this._choiceBranches = newParams[5];
+		$gameMessage.setChoiceCallback(function(n) {
+			this._branch[this._indent] = this._choiceBranches[n];
+		}.bind(this));
+	};
 
-		// New helper method
-		// Removes all choices made empty by Switchable Text.
-		Game_Interpreter.prototype.adjustChoiceParameters = function(params) {
-			newParams = params.clone();
-			var choices = newParams[0].clone();
-			var cancelBranch = newParams[1];
-			var defaultBranch = newParams[2];
-			var choiceBranches = new Array(choices.length);
-			for (var i = choices.length - 1; i >= 0; i--) {
-				choiceBranches[i] = i;
-				if (McKathlin.SwitchableText.isEmpty(choices[i])) {
-					choices.splice(i, 1);
-					choiceBranches.splice(i, 1);
-					if (cancelBranch > i) {
-						cancelBranch--;
-					}
-					if (defaultBranch > i) {
-						defaultBranch--;
-					}
+	//-------------------------------------------------------------------------
+	// Game_Interpreter adjust choice parameters - new helper method
+	// Removes all choices made empty Switchable Text.
+	Game_Interpreter.prototype.adjustChoiceParameters = function(params) {
+		newParams = params.clone();
+		var choices = newParams[0].clone();
+		var cancelBranch = newParams[1];
+		var defaultBranch = newParams[2];
+		var choiceBranches = new Array(choices.length);
+		for (var i = choices.length - 1; i >= 0; i--) {
+			choiceBranches[i] = i;
+			if (McKathlin.SwitchableText.isEmpty(choices[i])) {
+				choices.splice(i, 1);
+				choiceBranches.splice(i, 1);
+				if (cancelBranch > i) {
+					cancelBranch--;
+				}
+				if (defaultBranch > i) {
+					defaultBranch--;
 				}
 			}
-			newParams[0] = choices;
-			newParams[1] = cancelBranch;
-			newParams[2] = defaultBranch;
-			newParams[5] = choiceBranches;
-			return newParams;
-		};
-	}
+		}
+		newParams[0] = choices;
+		newParams[1] = cancelBranch;
+		newParams[2] = defaultBranch;
+		newParams[5] = choiceBranches;
+		return newParams;
+	};
 
-	// New helper method
-	// Check if empty after Switchable Text does its thing
+	// new helper method. Check if empty after Switchable Text does its thing
 	McKathlin.SwitchableText.isEmpty = function(text) {
 		text = text.replace(/\\/g, '\x1b');
 		text = text.replace(/\x1b\x1b/g, '\\');

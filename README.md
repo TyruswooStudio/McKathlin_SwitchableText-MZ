@@ -3,7 +3,7 @@ It lacks the features and improvements of this plugin's later versions.
 To get the latest version for free, visit
 [Tyruswoo.com](https://www.tyruswoo.com).
 
-# McKathlin Switchable Text v1.3.1 for RPG Maker MZ
+# McKathlin Switchable Text v1.2.1 for RPG Maker MZ
 
 Allows a text snippet to vary based on a switch, variable, or party attribute!
 
@@ -11,11 +11,8 @@ Perfect for making your game’s dialogue respond intelligently to the player’
 
 ## Compatibility
 
-This plugin is fully compatible with Tyruswoo_BigChoiceLists
-in any order on the plugin list.
-
-However, Switchable Text may conflict with
-non-Tyruswoo plugins that alter the way `Game_Interpreter` makes choice lists.
+Switchable Text may conflict with other plugins that alter the way
+`Game_Interpreter` makes choice lists.
 If you encounter conflicts, try switching which choice-list-affecting plugin
 comes after which. If conflicts with Switchable Text persist, talk to us on
 [Tyruswoo.com](https://www.tyruswoo.com) and we'll do our best to help you.
@@ -162,11 +159,8 @@ arrived.
 - Added \NumWord, \Ordinal, and \OrdinalWord, which change how
   numbers are written out.
 
-**v1.3** - 7/29/2022
-- Made fully compatible with Tyruswoo_BigChoiceLists.js
-
-**v1.3.1** - 8/31/2023
-- This plugin is now free and open source under the [MIT license](https://opensource.org/license/mit/).
+**v1.2.1** - 8/31/2023
+- This older plugin version is now free and open source under the [MIT license](https://opensource.org/license/mit/).
 
 > Happy storytelling!
 > 

@@ -3,7 +3,7 @@ It lacks the features and improvements of this plugin's later versions.
 To get the latest version for free, visit
 [Tyruswoo.com](https://www.tyruswoo.com).
 
-# McKathlin Switchable Text v1.1.1 for RPG Maker MZ
+# McKathlin Switchable Text v1.0.1 for RPG Maker MZ
 
 Allows a text snippet to vary based on a switch, variable, or party attribute!
 
@@ -51,8 +51,6 @@ The following comparison operators are valid for variable-based snippets:
   <=   Less or equal        <   Less than
 ```
 
-Switchable Text snippets can be nested inside each other.
-
 ## Switchable Text in Choice Lists
 
 If a dialogue choice ends up empty for a given Switchable state, it will
@@ -77,12 +75,6 @@ Good \ON[21]{evening}{day}, \OFF[A]{stranger}{friend}.
 Go safely. \OV[v143<=10]{Watch out for wolves.}
 ```
 
-```
-Excuse me for a moment.
-My \OV[v2>1]{\ON[41]{enemies}{friends} have}{\ON[41]{enemy}{friend} has}
-arrived.
-```
-
 `We have\OV[v22!=v23]{n't} squished the same number of bugs.`
 
 ### For more help using the Switchable Text plugin, see [Tyruswoo.com](https://www.tyruswoo.com).
@@ -92,13 +84,7 @@ arrived.
 **v1.0** - 9/3/2020
 - Switchable Text plugin released for RPG Maker MZ!
 
-**v1.1** - 9/13/2020
-- Added nested text snippets! Now, you can use switchable text
-  snippets nested within each other!
-- Added variable-to-variable comparison. You can now check one
-  variable's value against the value of another variable.
-
-**v1.1.1** - 9/1/2023
+**v1.0.1** - 9/1/2023
 - This older plugin version is now free and open source under the [MIT license](https://opensource.org/license/mit/).
 
 > Happy storytelling!

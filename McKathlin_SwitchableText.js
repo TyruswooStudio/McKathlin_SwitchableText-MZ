@@ -1,7 +1,7 @@
 //=============================================================================
 // Switchable Text
-// For RPG Maker MZ
-// By McKathlin
+// by McKathlin
+// Kath_Switchable.js
 //=============================================================================
 
 /*
@@ -36,10 +36,11 @@ McKathlin.SwitchableText = McKathlin.SwitchableText || {};
 
 /*:
  * @target MZ
- * @plugindesc v1.1.1 Allows a text snippet to vary based on a switch or variable without a page
- *             break. Switchable text snippets may be nested inside each other.
+ * @plugindesc v1.0.1 Allows a text snippet to vary based on a switch or variable
+ *      without causing a page break.
  * @author McKathlin
  * @url https://www.tyruswoo.com
+ * 
  * @help McKathlin Switchable Text
  * 
  * WARNING: This is an older plugin! It lacks features and improvements
@@ -63,11 +64,9 @@ McKathlin.SwitchableText = McKathlin.SwitchableText || {};
  * 
  * Start a variable-based snippet with a statement like this:
  *   \OV[vID>=N]{text} Show the text if the variable with the given ID has a
- *                     value greater than or equal to N.
+ *                    value greater than or equal to N.
  *   \OV[vID==N]{foo}{bar} Show "foo" if the variable's value is equal to N;
- *                         Otherwise, show "bar".
- *   \OV[vJ < vK]{blah} Show "blah" if variable J's value is less than
- *                      variable K's value.
+ *                        Otherwise, show "bar".
  * 
  * The following comparison operators are valid for variable-based snippets:
  *   ==   Equal               !=   Not equal
@@ -87,30 +86,19 @@ McKathlin.SwitchableText = McKathlin.SwitchableText || {};
  * Examples
  * ---------
  * Good \ON[21]{evening}{day}, \OFF[A]{stranger}{friend}.
- * Go safely. \OV[v143<=10]{Watch out for wolves.}
+ * Go safely. \OV[143<=10]{Watch out for wolves.}
  * 
- * Excuse me for a moment.
- * My \OV[v2>1]{\ON[41]{enemies}{friends} have}{\ON[41]{enemy}{friend} has}
- * arrived.
- * 
- * We have\OV[v22!=v23]{n't} squished the same number of bugs.
+ * TODO: add more examples.
  * 
  * This plugin does not use any parameters or plugin commands.
- * ============================================================================
- * For more help using the Switchable Text plugin, see Tyruswoo.com.
+ * 
  * ============================================================================
  * Version History:
- *
- * v1.0  9/3/2020
- *        - Switchable Text plugin released for RPG Maker MZ!
- *
- * v1.1  9/13/2020
- *        - Added nested text snippets! Now, you can use switchable text
- *          snippets nested within each other!
- *        - Added variable-to-variable comparison. You can now check one
- *          variable's value against the value of another variable.
  * 
- * v1.1.1  9/1/2023
+ * v1.0  9/3/2020
+ *         - Switchable Text plugin released for RPG Maker MZ!
+ * 
+ * v1.0.1  9/1/2023
  *        - This plugin is now free and open source under the MIT license.
  * 
  * ============================================================================
@@ -136,8 +124,7 @@ McKathlin.SwitchableText = McKathlin.SwitchableText || {};
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  * ============================================================================
- * Enjoy the plugin!
- * -McKathlin
+ * 
  */
 
 (() => {
@@ -150,45 +137,33 @@ McKathlin.SwitchableText = McKathlin.SwitchableText || {};
 
 	McKathlin.SwitchableText.evalVariableCondition = function(conditionString) {
 		var captures = conditionString.match(
-			/^(v)?(\d+) ?(={1,3}|>=|<=|>|<|!=|<>) ?(v)?(-?\d+)$/i);
-		var rightIsVariable = captures[4] != null; // A leading 'v' means it's a variable.
-		var leftIsVariable = !rightIsVariable || (captures[1] != null);
-		
-		var leftValue = Number.parseInt(captures[2]);
-		if (leftIsVariable) {
-			leftValue = $gameVariables.value(leftValue);
-		}
-		
-		var rightValue = Number.parseInt(captures[5]);
-		if (rightIsVariable) {
-			rightValue = $gameVariables.value(rightValue);
-		}
-		
-		var operator = captures[3];
+			/^v?(\d+) ?(={1,3}|>=|<=|>|<|!=|<>) ?(-?\d+)$/i);
+		var id = Number.parseInt(captures[1]);
+		var actualValue = $gameVariables.value(id);
+		var operator = captures[2];
+		var expectedValue = Number.parseInt(captures[3]);
 		switch(operator) {
 			case '=':
 			case '==':
 			case '===':
-				return leftValue == rightValue;
+				return actualValue == expectedValue;
 			case '>=':
-				return leftValue >= rightValue;
+				return actualValue >= expectedValue;
 			case '<=':
-				return leftValue <= rightValue;
+				return actualValue <= expectedValue;
 			case '>':
-				return leftValue > rightValue;
+				return actualValue > expectedValue;
 			case '<':
-				return leftValue < rightValue;
+				return actualValue < expectedValue;
 			case '!=':
 			case '<>':
-				return leftValue != rightValue;
+				return actualValue != expectedValue;
 			default:
 				throw new Error("Unsupported operator: " + operator);
 		} // end switch statement
 	};
 
 	McKathlin.SwitchableText.evalSwitchCondition = function(switchIdString) {
-		// Use only the part after the leading s or ss, if any.
-		var switchIdString = switchIdString.match(/^s{0,2}([ABCD]|\d+)$/i)[1];
 		if (/^[ABCD]$/i.test(switchIdString)) {
 			return this.evalSelfSwitchCondition(switchIdString);
 		}
@@ -226,6 +201,7 @@ McKathlin.SwitchableText = McKathlin.SwitchableText || {};
 	Window_Base.prototype.convertEscapeCharacters = function(text) {
 		text = McKathlin.SwitchableText.Window_Base_convertEscapeCharacters.call(
 			this, text);
+		console.log("SwitchableText called convertEscapeCharacters.");
 		text = McKathlin.SwitchableText.convertSwitchableText(text);
 		text = McKathlin.SwitchableText.convertEncodedBraces(text);
 		return text;
@@ -235,41 +211,36 @@ McKathlin.SwitchableText = McKathlin.SwitchableText || {};
 	// Window_Base convert Switchable Text - new method
 	McKathlin.SwitchableText.convertSwitchableText = function(text) {
 		// Convert switch-conditioned text.
-		// If statements are nested, multiple passes will be necessary to replace all.
-		// Innermost statements will be replaced first.
-		var textIsChanging = true;
-		while (textIsChanging) {
-			var newText = text.replace(
-				/\x1b(ON|OFF|OV)\[([^\]]+)\]\{([^\{\}]*)\}(?:\{([^\{\}]*)\}|([^\{])|$)/gi,
-				function() {
-					var textCode = arguments[1].toUpperCase();
-					var conditionString = arguments[2].toUpperCase();
-					var ifText = arguments[3]; // Text to show if condition is true.
-					var elseText = arguments[4] || ""; // Text to show if condition is false.
-					var tail = arguments[5] || ""; // Captured for lookahead only. Put back.
-					var conditionMet = false;
-					switch(textCode) {
-						case 'ON':
-							conditionMet = McKathlin.SwitchableText.evalSwitchCondition(
-								conditionString);
-							break;
-						case 'OFF':
-							conditionMet = !McKathlin.SwitchableText.evalSwitchCondition(
-								conditionString);
-							break;
-						case 'OV':
-							conditionMet = McKathlin.SwitchableText.evalVariableCondition(
-								conditionString);
-							break;
-						default:
-							throw new Error("Unbuilt Switchable code: " + textCode);
-					}
-					return (conditionMet ? ifText : elseText) + tail;
-				}.bind(this)
-			);
-			textIsChanging = (newText != text); // check for changes
-			text = newText; // update text
-		} // while (textIsChanging)
+		text = text.replace(
+			/\x1b(ON|OFF|OV)\[([^\]]+)\]\{([^\}]*)\}(?:\{([^\}]*)\})?/gi,
+			function() {
+				var textCode = arguments[1].toUpperCase();
+				var conditionString = arguments[2].toUpperCase();
+				var ifText = arguments[3];
+				var elseText = arguments[4] || "";
+				var conditionMet = false;
+				switch(textCode) {
+					case 'ON':
+						console.log("SwitchableText: ON condition found.");
+						conditionMet = McKathlin.SwitchableText.evalSwitchCondition(
+							conditionString);
+						break;
+					case 'OFF':
+						console.log("SwitchableText: OFF condition found.");
+						conditionMet = !McKathlin.SwitchableText.evalSwitchCondition(
+							conditionString);
+						break;
+					case 'OV':
+						console.log("SwitchableText: OV condition found.");
+						conditionMet = McKathlin.SwitchableText.evalVariableCondition(
+							conditionString);
+						break;
+					default:
+						throw new Error("Unbuilt Switchable code: " + textCode);
+				}
+				return conditionMet ? ifText : elseText;
+			}.bind(this)
+		);
 		return text;
 	};
 

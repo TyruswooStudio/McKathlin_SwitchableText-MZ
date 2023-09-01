@@ -1,4 +1,9 @@
-# McKathlin Switchable Text for RPG Maker MZ
+## WARNING: This is an older version!
+It lacks the features and improvements of this plugin's later versions.
+To get the latest version for free, visit
+[Tyruswoo.com](https://www.tyruswoo.com).
+
+# McKathlin Switchable Text v1.3.1 for RPG Maker MZ
 
 Allows a text snippet to vary based on a switch, variable, or party attribute!
 
@@ -7,17 +12,13 @@ Perfect for making your game’s dialogue respond intelligently to the player’
 ## Compatibility
 
 This plugin is fully compatible with Tyruswoo_BigChoiceLists
-in any order on the plugin list. However, Switchable Text may conflict with
+in any order on the plugin list.
+
+However, Switchable Text may conflict with
 non-Tyruswoo plugins that alter the way `Game_Interpreter` makes choice lists.
 If you encounter conflicts, try switching which choice-list-affecting plugin
 comes after which. If conflicts with Switchable Text persist, talk to us on
 [Tyruswoo.com](https://www.tyruswoo.com) and we'll do our best to help you.
-
-When `Tyruswoo_EventAI` is in the plugin list (either above or below),
-Switchable Text can also check self variables using the `\OV` code, and extra
-self switches using the `\ON` code. Special syntax even allows checking other
-events' self variables and self switches. More details near the end of this
-help text.
 
 ## Switchable Snippets
 
@@ -100,34 +101,6 @@ to escape the literal curly braces with these codes:
 | `\BO`     | Opening brace { |
 | `\BC`     | Closing brace } |
 
-## Actor Attributes
-
-This plugin expands the syntax of the text codes \P[n] and \N[n]:
-with the form \P[n.attribute] or \N[n.attribute], you can insert any of
-a variety of Actor attributes.
-
-Examples:
-* `If it isn't old \P[1.nickname]! Long time no see.`
-* `I see you have a new \P[2.class] recruit.`
-* `Any word from \N[5.nickname]?`
-
-Available attributes include class, name, nickname, level, and profile.
-If some other attribute name is given, Switchable Text will search the
-notetags for its value. Make up any notetags you like!
-
-Imagine, for the notetag-using examples below, that each party member
-has a few tags in the Note field of their Actors database entry:
-a polite address notetag `<polite: sir>` or `<polite: ma'am>`, as well as a
-derogatory notetag `<derog: nerd>`, `<derog: old geezer>`, or `<derog: brat>`...
-you get the idea.
-
-`Good \ON[10]{evening}{day}, \P[1.polite].`
-
-```
-Get lost, \P[1.derog].
-\OPS[>=2]{I don't want to see you or that \P[2.derog] again.}
-```
-
 ## More Text Codes
 
 This plugin offers the following additional text codes:
@@ -151,23 +124,7 @@ Examples:
 * `You're our \OrdinalWord[\V[158]] visitor!`
 * `This might be difficult for \an \OrdinalWord[\P[1.level]] level group.`
 
-## Grammar Helper Codes
-
-The following postprocessing text codes resolve after other text codes,
-to address grammatical issues that commonly occur in variable text.
-
-| Text Code         | Description                                          |
-|-------------------|------------------------------------------------------|
-| `\UP{some text}`  | This changes all text inside the braces to all caps. |
-| `\UP`             | Without braces, it makes only one letter uppercase.  |
-| `\LOW{some text}` | This makes the contained text all-lowercase.         |
-| `\LOW`            | Without braces, it makes only one letter lowercase.  |
-| `\an`             | This will insert "a" or "an" depending on whether the immediately after it starts with a vowel sound. |
-| `\An`             | Inserts "A" or "An" with a capital A.                |
-
 ## More Examples
-
-`\UP\NumWord[\V[38]] soldier\OV[v38>1]{s} left town this morning.`
 
 ```
 Good \ON[21]{evening}{day}, \OFF[A]{stranger}{friend}.
@@ -183,46 +140,6 @@ arrived.
 `We have\OV[v22!=v23]{n't} squished the same number of bugs.`
 
 `Come in\OPS[>1]{, \OPS[2]{both of you}{all \NumWord[\PartySize] of you}}!`
-
-`\An \LOW{\N[3.class]} passed through here \NumWord[\V[14]] day\OV[14>1]{s} ago.`
-
-## Checking Self Switches and Self Variables with Tyruswoo Event AI
-
-Snippets like those below **require** `Tyruswoo_EventAI` in the plugin list.
-
-The text below checks Self Switch B of Event #28 in Map #12,
-and changes the text accordingly:
-
-`I saw a blue \ON[B m12 e28]{butterfly}{caterpillar} on the way.`
-
-Here's the equivalent, but referencing map and event by name.
-
-```
-I saw a blue \ON[B m(West Glade) e(Little Blue)]{butterfly}{caterpillar}
-on the way.
-```
-
-Self variables and extra self switches can also be accessed this way.
-If no map is specified, Switchable Text references the current map.
-If neither map nor event are specified, Switchable Text checks the event
-that is currently linked, or if none is linked, the event that is currently
-running.
-
-Here's an example of checking Alice's self variable.
-Alice is across the room on the same map as the speaker.
-
-`Alice \OV[7 e(Alice) > 5]{likes}{hardly knows} you.`
-
-Self variable reference syntax also works inside the \V[n] text code.
-For example, the sentence below checks Charlie's value of a self variable.
-The self variable was made from Variable 50, which is named "s:Days Worked".
-
-`Charlie has worked here for \V[50 e(Charlie)] days.`
-
-Here's an example of checking one's own self variable, vs. checking someone
-else's.
-
-`I've earned \V[45] tokens so far. Dad has \V[45 e(Dad)].`
 
 ### For more help using the Switchable Text plugin, see [Tyruswoo.com](https://www.tyruswoo.com).
 
@@ -248,17 +165,7 @@ else's.
 **v1.3** - 7/29/2022
 - Made fully compatible with Tyruswoo_BigChoiceLists.js
 
-**v2.0** - 8/8/2022
-- Can coordinate with Tyruswoo_EventAI to check a self switch or
-  self variable of any other event anywhere.
-- \P[n.attribute] or \N[n.attribute] can insert an actor's class,
-  nickname, level, or any notetag value.
-- New text processing utility codes \an, \UP, and \LOW.
-- Bugfix: In previous versions, a Name Box Window whose switchable
-  text resolved to empty would still show up on screen. Now, an empty
-  name box window always hides.
-
-**v2.0.1** - 8/30/2023
+**v1.3.1** - 8/31/2023
 - This plugin is now free and open source under the [MIT license](https://opensource.org/license/mit/).
 
 > Happy storytelling!

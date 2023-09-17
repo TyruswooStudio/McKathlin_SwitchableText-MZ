@@ -36,8 +36,8 @@ McKathlin.SwitchableText = McKathlin.SwitchableText || {};
 
 /*:
  * @target MZ
- * @plugindesc v1.3.1 Allows a text snippet to vary based on a switch, variable, or party
- * attribute without a page break.
+ * @plugindesc MZ v1.3.1 Allows a text snippet to vary based on a switch, variable,
+ * or party attribute without a page break.
  * @author McKathlin
  * @url https://www.tyruswoo.com
  * 

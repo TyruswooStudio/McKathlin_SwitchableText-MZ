@@ -36,8 +36,8 @@ McKathlin.SwitchableText = McKathlin.SwitchableText || {};
 
 /*:
  * @target MZ
- * @plugindesc v1.1.1 Allows a text snippet to vary based on a switch or variable without a page
- *             break. Switchable text snippets may be nested inside each other.
+ * @plugindesc MZ v1.1.1 Allows a text snippet to vary based on a switch or variable
+ *             without a page break. Snippets may nest inside each other.
  * @author McKathlin
  * @url https://www.tyruswoo.com
  * @help McKathlin Switchable Text

@@ -256,7 +256,7 @@ McKathlin.SwitchableText = McKathlin.SwitchableText || {};
  * 
  * This plugin does not use any parameters or plugin commands.
  * ============================================================================
- * For more help using the Switchable Text plugin, see Tyruswoo.com.
+ * Visit Tyruswoo.com to ask for help, donate, or browse more of our plugins.
  * ============================================================================
  * Version History:
  *
